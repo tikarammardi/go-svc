@@ -34,3 +34,6 @@ coverage.txt
 /bin
 cover.out
 cover.html
+
+# Binaries for programs and plugins
+app/services/sales-api/sales-api
