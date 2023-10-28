@@ -1,5 +1,10 @@
 SHELL_PATH = /bin/ash
+# ==============================================================================
+# Testing running system
 
+# expvarmon -ports=":4000" -vars="build,requests,goroutines,errors,panics,mem:memstats.Alloc"
+
+# ==============================================================================
 run:
 	@echo "Running..."
 	go run app/services/sales-api/main.go | go run app/tooling/logfmt/main.go
@@ -45,6 +50,8 @@ kind-status:
 	kubectl get svc -o wide
 	kubectl get pods -o wide --watch --all-namespaces
 
+kind-status-sales:
+	kubectl get pods -l app=sales -o wide --watch
 kind-logs:
 	kubectl logs -f -l app=sales --all-containers=true -f --tail=100 | go run app/tooling/logfmt/main.go
 
