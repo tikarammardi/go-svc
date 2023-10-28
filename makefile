@@ -2,7 +2,7 @@ SHELL_PATH = /bin/ash
 
 run:
 	@echo "Running..."
-	go run main.go
+	go run app/services/sales-api/main.go | go run app/tooling/logfmt/main.go
 # Building containers
 
 VERSION := 1.0.0
@@ -34,7 +34,7 @@ kind-load:
 	kind load docker-image sales-api-amd64:$(VERSION) --name $(KIND_CLUSTER)
 
 kind-apply:
-	kustomize build zarf/k8s/kind/sales-pod | kubectl apply -f -
+		kustomize build zarf/k8s/kind/sales-pod | kubectl apply -f -
 
 kind-update: all kind-load kind-restart
 
@@ -46,7 +46,7 @@ kind-status:
 	kubectl get pods -o wide --watch --all-namespaces
 
 kind-logs:
-	kubectl logs -f -l app=sales --all-containers=true -f --tail=100
+	kubectl logs -f -l app=sales --all-containers=true -f --tail=100 | go run app/tooling/logfmt/main.go
 
 kind-restart:
 	kubectl rollout restart deployment sales-pod
