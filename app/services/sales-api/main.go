@@ -2,6 +2,7 @@ package main
 
 import (
 	"errors"
+	"expvar"
 	"fmt"
 
 	"github.com/ardanlabs/conf"
@@ -80,7 +81,7 @@ func run(log *zap.SugaredLogger) error {
 		}
 		return fmt.Errorf("parsing config: %w", err)
 	}
-
+	expvar.NewString("build").Set(build)
 	// App Starting
 
 	log.Infow("starting service", "version", build)
@@ -91,6 +92,14 @@ func run(log *zap.SugaredLogger) error {
 		return fmt.Errorf("generating config for output: %w", err)
 	}
 	log.Infow("startup", "config", out)
+
+	// =========================================================================
+	// Start Debug Service
+
+	log.Infow("startup", "status", "debug router started", "host", cfg.Web.DebugHost)
+
+	// The Debug function returns a mux to listen and serve on for all the debug
+	// related endpoints. This include the standard library endpoints.
 
 	// Construct the mux for the debug calls.
 	debugMux := handlers.DebugStandardLibraryMux()
